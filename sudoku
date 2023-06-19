@@ -1,0 +1,184 @@
+/*
+ * sudoku.cpp
+ *
+ * This program solves Sudoku puzzles and generates random Sudoku puzzles.
+ * It uses a backtracking algorithm to efficiently solve any Sudoku grid.
+ *
+ * Author: Yasna Rezvani
+ * Date: June 18, 2023
+ */
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Method declarations
+bool solvePuzzle(vector<vector<int>>& puzzle);
+bool isValid(const vector<vector<int>>& puzzle, int row, int col, int n);
+void displayPuzzle(const vector<vector<int>>& puzzle);
+
+// Method to solve the Sudoku puzzle
+bool solvePuzzle(vector<vector<int>>& puzzle) {
+
+    for (int i = 0; i < puzzle.size(); i++) {  // Loop through the rows of the puzzle
+        for (int j = 0; j < puzzle[i].size(); j++) {  // Loop through the columns of the puzzle
+            if (puzzle[i][j] == 0) {    //if there's an empty cell
+                for (int n = 1; n < 10; n++) {  //go through all possible values (1-9)
+
+                    //assign n to the cell if it's valid
+                    if (isValid(puzzle, i, j, n)) {
+                        puzzle[i][j] = n;
+
+                        //if a solution is found return true
+                        if (solvePuzzle(puzzle))    //recursive call to continue finding empty cells
+                            return true;
+                        
+                        /*code will reach here when recursive call led to return false
+                        * we need to backtrack to find a different number
+                        * so, the current cell is set to "0" so it's treated like an empty cell
+                        * this happens when our assumption of an earlier number is wrong
+                        */
+                        puzzle[i][j] = 0;
+                    }
+                }
+                //numbers 1-9 were not valid
+                return false;
+            }
+
+        }
+    }
+    return true;
+}
+
+/*isValid method checks if given number(n) matches a number in the same : col, row, or subgrid
+* @param puzzle - given 2d vector
+* @param row - the row of n
+* @param col - the column of n
+* @param n - the number being checked (1-9)
+*/
+bool isValid(const vector<vector<int>>& puzzle, int row, int col, int n) {
+
+    //if number matches with a cell in col
+    for (int i = 0; i < puzzle.size(); i++) {
+        if (n == puzzle[i][col])
+            return false;
+    }
+
+    //if number(n) matches with a cell in row
+    for(int j = 0; j < puzzle[row].size(); j++){
+        if (n == puzzle[row][j])
+            return false;
+    }
+
+    //find if number(n) is within its own cell
+    
+    //int division by 3 and then multiplying by 3
+    //this brings us back to first row/col in that subgrid 
+    int subgridRow = 3 * (row / 3);
+    int subgridCol = 3 * (col / 3);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+
+            //if any of the numbers in the subgrid matches number(n)
+            if (puzzle[subgridRow + i][subgridCol + j] == n)
+                return false;
+        }
+    }
+
+    //if code reaches this far, n must be valid
+    return true;
+}
+
+// Method to display the Sudoku puzzle
+void displayPuzzle(const vector<vector<int>>& puzzle) {
+    // double for-loop for 2d vector
+    for (int i = 0; i < puzzle.size(); i++) {
+
+        //separate subgrids with horizontal lines
+        //separation must happen between 3&4 and again between 6&7
+        if (i == 3||i==6)
+            cout << "------|-------|------" << "\n";
+
+        // counter to set vertical lines between each subgrid
+        int counter = 0;
+        for (int j = 0; j < puzzle[0].size(); j++) {
+
+            //set a vertical line to organize between each subgrid
+            if (counter == 3) {
+                cout << "| ";
+                counter = 0;
+            }
+
+            //if grid space is 0, display extra space
+            if (puzzle[i][j] == 0)
+                cout << "  ";
+
+            //else, display given number with a space
+            else
+                cout << puzzle[i][j] << " ";
+
+            counter++; //increment 
+        }
+        cout << "\n";   //go to next row appropriately
+    }
+}
+
+int main() {
+    vector<vector<int>> puzzle = {
+    {5, 3, 0, 0, 7, 0, 0, 0, 0},
+    {6, 0, 0, 1, 9, 5, 0, 0, 0},
+    {0, 9, 8, 0, 0, 0, 0, 6, 0},
+    {8, 0, 0, 0, 6, 0, 0, 0, 3},
+    {4, 0, 0, 8, 0, 3, 0, 0, 1},
+    {7, 0, 0, 0, 2, 0, 0, 0, 6},
+    {0, 6, 0, 0, 0, 0, 2, 8, 0},
+    {0, 0, 0, 4, 1, 9, 0, 0, 5},
+    {0, 0, 0, 0, 8, 0, 0, 7, 9}
+    };
+
+    int option;
+    bool solved = false;
+
+    do {
+        cout << "Menu:" << endl;
+        cout << "1. Display Sudoku" << endl;
+        cout << "2. Solve Sudoku" << endl;
+        cout << "3. Quit" << endl;
+        cout << "Enter your choice: ";
+        cin >> option;
+
+        switch (option) {
+        case 1:
+            cout << endl << "Sudoku:" << endl;
+            displayPuzzle(puzzle);
+            break;
+        case 2:
+            if (!solved) {
+                if (solvePuzzle(puzzle)) {
+                    cout << endl << "Sudoku solved!" << endl;
+                    solved = true;
+                    displayPuzzle(puzzle);
+                }
+                else {
+                    cout << "Unable to solve Sudoku." << endl;
+                }
+            }
+            else {
+                cout << "Sudoku has already been solved." << endl;
+            }
+            break;
+        case 3:
+            cout << "Exiting..." << endl;
+            break;
+        default:
+            cout << "Invalid choice. Please try again." << endl;
+        }
+
+        cout << endl;
+
+    } while (option != 3);
+
+    return 0;
+}
