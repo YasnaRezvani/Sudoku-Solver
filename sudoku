@@ -32,7 +32,8 @@ int main() {
         cout << "Menu:" << endl;
         cout << "1. Generate New Sudoku" << endl;
         cout << "2. Solve Sudoku" << endl;
-        cout << "3. Quit" << endl;
+        cout << "3. Input Custom Sudoku" << endl;
+        cout << "4. Quit" << endl;
         cout << "Enter your choice: ";
         cin >> option;
 
@@ -51,6 +52,15 @@ int main() {
                 cout << "Unable to solve Sudoku." << endl;
             break;
         case 3:
+            cout << "Enter your custom Sudoku puzzle (9x9 grid):" << endl;
+            for (int i = 0; i < puzzle.size(); i++) {
+                for (int j = 0; j < puzzle[i].size(); j++) {
+                    cin >> puzzle[i][j];
+                }
+            }
+            displayPuzzle(puzzle);
+            break;
+        case 4:
             cout << "Exiting..." << endl;
             break;
         default:
@@ -58,7 +68,7 @@ int main() {
         }
         cout << endl;
 
-    } while (option != 3);
+    } while (option != 4);
     return 0;
 }
 
