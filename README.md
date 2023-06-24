@@ -1,6 +1,6 @@
 # Sudoku Solver and Generator
 
-This program solves user-inputted Sudoku puzzles and generates random unsolved Sudoku puzzles for the user to test out. The main compenent is a backtracking algorithm to efficiently solve any Sudoku grid.
+This program solves user-inputted Sudoku puzzles and generates random unsolved Sudoku puzzles for the user to test out. The main component is a backtracking algorithm to efficiently solve any Sudoku grid.
 
 ## How to Use
 
