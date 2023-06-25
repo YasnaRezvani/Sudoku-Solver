@@ -5,7 +5,7 @@
  * It uses a backtracking algorithm to efficiently solve any Sudoku grid.
  *
  * Author: Yasna Rezvani
- * Date: June 23, 2023
+ * Date: June 24, 2023
  */
 
 #include <iostream>
@@ -82,12 +82,19 @@ int main() {
  * @return Returns true if it's a solvable sudoku, false otherwise.
  */
 bool solvePuzzle(vector<vector<int>>& puzzle) {
+    mt19937 generator(random_device{}()); //declare generator to pass it in shuffle method
 
     //double for-loop goes through each cell of the puzzle and checks if it's empty
     for (int i = 0; i < puzzle.size(); i++) {
         for (int j = 0; j < puzzle[i].size(); j++) {
             if (puzzle[i][j] == 0) {    //if there's an empty cell
-                for (int n = 1; n < 10; n++) {  //go through all possible values (1-9)
+
+                vector<int> OneToNine = { 1,2,3,4,5,6,7,8,9 }; //a vector of the potential values
+
+                //the for loop can't start from n=1 every time
+                //a shuffle is used to change the order of the vector
+                shuffle(OneToNine.begin(), OneToNine.end(), generator);
+                for (int n : OneToNine) {  //go through all possible values (1-9)
 
                     //assign n to the cell if it's a valid number according to sudoku rules
                     if (isValid(puzzle, i, j, n)) {
@@ -201,12 +208,11 @@ void displayPuzzle(const vector<vector<int>>& puzzle) {
  * 40 cells to create some difficulty. The generated puzzle
  * is stored in the provided 2D vector 'puzzle'.
  *
- * @param puzzle The 2D vector to store the generated Sudoku puzzle.
- * The given puzzle is an empty grid.
+ * @param puzzle The 2D vector to store the generated Sudoku puzzle. The given puzzle is an empty grid.
+ * @param generate The random number engine. This guarantees the randomness of the generation.
  */
 void generateSudoku(vector<vector<int>>& puzzle) {
-    random_device rd;   //random device for generating seed
-    mt19937 gen(rd());  //random number engine generating unsigned random integers
+    mt19937 generator(random_device{}());
     uniform_int_distribution<int> distrib(1, 9); //gives random values from 1-9, inclusive
 
     int emptyCells = 40; //variable to remove 40 cells
@@ -224,8 +230,8 @@ void generateSudoku(vector<vector<int>>& puzzle) {
             while (emptyCells != 0) {
 
                 //random row and column variables [0-8]
-                int row = distrib(gen) % 9;
-                int col = distrib(gen) % 9;
+                int row = distrib(generator) % 9;
+                int col = distrib(generator) % 9;
 
                 if (copyOfPuzzle[row][col] != 0) {
                     int value = copyOfPuzzle[row][col]; //variable for value
