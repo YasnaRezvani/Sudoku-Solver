@@ -37,7 +37,7 @@ This function generates a random unsolved Sudoku puzzle. It creates a new Sudoku
 
 ## Author
 
-This program was written by Yasna Rezvani on June 23, 2023.
+This program was written by Yasna Rezvani on June 24, 2023.
 
 ## Note
 
